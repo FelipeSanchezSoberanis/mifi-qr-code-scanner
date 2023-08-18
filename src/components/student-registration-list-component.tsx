@@ -9,7 +9,7 @@ export default function StudentRegistrationsListComponent(props: {
 }) {
   return (
     <View style={props.style}>
-      <Text variant="titleLarge">Registros</Text>
+      <Text variant="titleLarge">Registros ({props.studentRegistrations.length})</Text>
       <FlatList
         data={props.studentRegistrations}
         renderItem={(reg) => (

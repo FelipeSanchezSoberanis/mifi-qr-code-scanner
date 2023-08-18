@@ -10,6 +10,24 @@ import { Text } from "react-native-paper";
 export default function Main() {
   const [studentRegistrations, setStudentRegistrations] = React.useState<StudentRegistration[]>([]);
   const [hasCameraPermission, setHasCameraPermission] = React.useState<boolean>(false);
+  const [showCamera, setShowCamera] = React.useState<boolean>(false);
+
+  function handleBarCodeScanned({ data }: { data: string }) {
+    const fields = data.split("$");
+
+    const newReg: StudentRegistration = {
+      name: fields[0],
+      enrollmentId: fields[1] ? Number(fields[1]) : null,
+      startingSemester: fields[2],
+      email: fields[3],
+      phoneNumber: fields[4] ? Number(fields[4]) : null,
+      registrationTime: new Date().toISOString()
+    };
+
+    setStudentRegistrations((state) => [...state, newReg]);
+
+    setShowCamera(false);
+  }
 
   React.useEffect(() => {
     async function getCameraPermission() {
@@ -30,6 +48,17 @@ export default function Main() {
     );
   }
 
+  if (showCamera) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <BarCodeScanner
+          onBarCodeScanned={handleBarCodeScanned}
+          style={StyleSheet.absoluteFillObject}
+        />
+      </View>
+    );
+  }
+
   return (
     <PaperProvider>
       <View style={styles.mainView}>
@@ -37,7 +66,7 @@ export default function Main() {
           style={styles.list}
           studentRegistrations={studentRegistrations}
         />
-        <ButtonGroupComponent style={styles.buttonGroup} />
+        <ButtonGroupComponent style={styles.buttonGroup} onShowCamera={() => setShowCamera(true)} />
       </View>
     </PaperProvider>
   );
