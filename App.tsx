@@ -6,6 +6,8 @@ import StudentRegistrationsListComponent from "./src/components/student-registra
 import ButtonGroupComponent from "./src/components/button-group-component";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Text } from "react-native-paper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { asyncStorages } from "./src/async-storages";
 
 export default function Main() {
   const [studentRegistrations, setStudentRegistrations] = React.useState<StudentRegistration[]>([]);
@@ -20,7 +22,10 @@ export default function Main() {
       },
       {
         text: "Borrar",
-        onPress: () => setStudentRegistrations([]),
+        onPress: () => {
+          setStudentRegistrations([]);
+          AsyncStorage.removeItem(asyncStorages.studentRegistrations);
+        },
         style: "default"
       }
     ]);
@@ -38,18 +43,37 @@ export default function Main() {
       registrationTime: new Date().toISOString()
     };
 
-    setStudentRegistrations((state) => [...state, newReg]);
+    setStudentRegistrations((state) => {
+      const newState = [...state, newReg];
+      AsyncStorage.setItem(asyncStorages.studentRegistrations, JSON.stringify(newState));
+      return newState;
+    });
 
     setShowCamera(false);
   }
 
-  React.useEffect(() => {
-    async function getCameraPermission() {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setHasCameraPermission(status === "granted");
-    }
+  async function getCameraPermission() {
+    const { status } = await BarCodeScanner.requestPermissionsAsync();
+    setHasCameraPermission(status === "granted");
+  }
 
+  async function retrieveSavedRegistrations() {
+    const savedStudentRegistrationsString = await AsyncStorage.getItem(
+      asyncStorages.studentRegistrations
+    );
+
+    if (!savedStudentRegistrationsString) return;
+
+    const savedStudentRegistrations = JSON.parse(
+      savedStudentRegistrationsString
+    ) as StudentRegistration[];
+
+    setStudentRegistrations(savedStudentRegistrations);
+  }
+
+  React.useEffect(() => {
     getCameraPermission();
+    retrieveSavedRegistrations();
   }, []);
 
   if (!hasCameraPermission) {
