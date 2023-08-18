@@ -8,6 +8,8 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import { Text } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { asyncStorages } from "./src/async-storages";
+import Papaparse from "papaparse";
+import Share from "react-native-share";
 
 export default function Main() {
   const [studentRegistrations, setStudentRegistrations] = React.useState<StudentRegistration[]>([]);
@@ -29,6 +31,22 @@ export default function Main() {
         style: "default"
       }
     ]);
+  }
+
+  async function toBase64(input: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.onload = () => resolve(fileReader.result as string);
+      fileReader.onerror = () => reject();
+      fileReader.readAsDataURL(input);
+    });
+  }
+
+  async function saveRegistrations() {
+    const csvContent = Papaparse.unparse(studentRegistrations);
+    const csvFile = new Blob([csvContent], { type: "text/csv" });
+    const csvBase64 = await toBase64(csvFile);
+    await Share.open({ url: csvBase64, filename: "registrations.csv" });
   }
 
   function handleBarCodeScanned({ data }: { data: string }) {
@@ -107,7 +125,8 @@ export default function Main() {
         <ButtonGroupComponent
           style={styles.buttonGroup}
           onShowCamera={() => setShowCamera(true)}
-          onDeleteRegisters={deleteRegisters}
+          onDeleteRegistrations={deleteRegisters}
+          onSaveRegistrations={saveRegistrations}
           studentRegistrations={studentRegistrations}
         />
       </View>

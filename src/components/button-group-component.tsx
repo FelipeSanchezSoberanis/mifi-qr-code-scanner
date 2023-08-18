@@ -6,7 +6,8 @@ export default function ButtonGroupComponent(props: {
   studentRegistrations: StudentRegistration[];
   style: StyleProp<ViewStyle>;
   onShowCamera: () => any;
-  onDeleteRegisters: () => any;
+  onDeleteRegistrations: () => any;
+  onSaveRegistrations: () => any;
 }) {
   return (
     <View style={props.style}>
@@ -18,7 +19,7 @@ export default function ButtonGroupComponent(props: {
         style={styles.button}
         icon="delete"
         mode="contained"
-        onPress={props.onDeleteRegisters}
+        onPress={props.onDeleteRegistrations}
       >
         Borrar registros
       </Button>
@@ -27,7 +28,7 @@ export default function ButtonGroupComponent(props: {
         style={styles.button}
         icon="file-account"
         mode="contained"
-        onPress={() => console.log("Guardar registros en archivo")}
+        onPress={props.onSaveRegistrations}
       >
         Guardar registros
       </Button>
