@@ -1,20 +1,39 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import * as React from "react";
+import { StyleSheet, View } from "react-native";
+import { PaperProvider } from "react-native-paper";
+import { StudentRegistration } from "./src/types";
+import StudentRegistrationsListComponent from "./src/components/student-registration-list-component";
+import ButtonGroupComponent from "./src/components/button-group-component";
 
-export default function App() {
+export default function Main() {
+  const [studentRegistrations, setStudentRegistrations] = React.useState<StudentRegistration[]>([]);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <PaperProvider>
+      <View style={styles.mainView}>
+        <StudentRegistrationsListComponent
+          style={styles.list}
+          studentRegistrations={studentRegistrations}
+        />
+        <ButtonGroupComponent style={styles.buttonGroup} />
+      </View>
+    </PaperProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  mainView: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
+    padding: 25,
+    paddingTop: 50,
+    paddingBottom: 50,
+    display: "flex"
+  },
+  list: {
+    flex: 9
+  },
+  buttonGroup: {
+    flex: 3,
+    marginTop: 25
   }
 });
