@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import { PaperProvider } from "react-native-paper";
 import { StudentRegistration } from "./src/types";
 import StudentRegistrationsListComponent from "./src/components/student-registration-list-component";
@@ -11,6 +11,20 @@ export default function Main() {
   const [studentRegistrations, setStudentRegistrations] = React.useState<StudentRegistration[]>([]);
   const [hasCameraPermission, setHasCameraPermission] = React.useState<boolean>(false);
   const [showCamera, setShowCamera] = React.useState<boolean>(false);
+
+  function deleteRegisters() {
+    Alert.alert("¿Borrar registros?", "Esta acción no puede ser revertida", [
+      {
+        text: "Cancelar",
+        style: "cancel"
+      },
+      {
+        text: "Borrar",
+        onPress: () => setStudentRegistrations([]),
+        style: "default"
+      }
+    ]);
+  }
 
   function handleBarCodeScanned({ data }: { data: string }) {
     const fields = data.split("$");
@@ -66,7 +80,12 @@ export default function Main() {
           style={styles.list}
           studentRegistrations={studentRegistrations}
         />
-        <ButtonGroupComponent style={styles.buttonGroup} onShowCamera={() => setShowCamera(true)} />
+        <ButtonGroupComponent
+          style={styles.buttonGroup}
+          onShowCamera={() => setShowCamera(true)}
+          onDeleteRegisters={deleteRegisters}
+          studentRegistrations={studentRegistrations}
+        />
       </View>
     </PaperProvider>
   );

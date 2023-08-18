@@ -1,9 +1,12 @@
 import { Button } from "react-native-paper";
 import { StyleProp, View, ViewStyle, StyleSheet } from "react-native";
+import { StudentRegistration } from "../types";
 
 export default function ButtonGroupComponent(props: {
+  studentRegistrations: StudentRegistration[];
   style: StyleProp<ViewStyle>;
   onShowCamera: () => any;
+  onDeleteRegisters: () => any;
 }) {
   return (
     <View style={props.style}>
@@ -11,14 +14,16 @@ export default function ButtonGroupComponent(props: {
         Abrir scanner
       </Button>
       <Button
+        disabled={!props.studentRegistrations.length}
         style={styles.button}
         icon="delete"
         mode="contained"
-        onPress={() => console.log("Borrar registros")}
+        onPress={props.onDeleteRegisters}
       >
         Borrar registros
       </Button>
       <Button
+        disabled={!props.studentRegistrations.length}
         style={styles.button}
         icon="file-account"
         mode="contained"
