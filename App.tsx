@@ -46,7 +46,7 @@ export default function Main() {
     const csvContent = Papaparse.unparse(studentRegistrations);
     const csvFile = new Blob([csvContent], { type: "text/csv" });
     const csvBase64 = await toBase64(csvFile);
-    await Share.open({ url: csvBase64, filename: "registrations.csv" });
+    await Share.open({ url: csvBase64, filename: "registrations" });
   }
 
   function handleBarCodeScanned({ data }: { data: string }) {
