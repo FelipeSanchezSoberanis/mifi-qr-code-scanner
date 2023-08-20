@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Alert, StyleSheet, View } from "react-native";
-import { PaperProvider } from "react-native-paper";
+import { Button, PaperProvider } from "react-native-paper";
 import { StudentRegistration } from "./src/types";
 import StudentRegistrationsListComponent from "./src/components/student-registration-list-component";
 import ButtonGroupComponent from "./src/components/button-group-component";
@@ -14,7 +14,7 @@ import Share from "react-native-share";
 export default function Main() {
   const [studentRegistrations, setStudentRegistrations] = React.useState<StudentRegistration[]>([]);
   const [hasCameraPermission, setHasCameraPermission] = React.useState<boolean>(false);
-  const [showCamera, setShowCamera] = React.useState<boolean>(false);
+  const [showCamera, setShowCamera] = React.useState<boolean>(true);
 
   function deleteRegisters() {
     Alert.alert("¿Borrar registros?", "Esta acción no puede ser revertida", [
@@ -46,7 +46,7 @@ export default function Main() {
     const csvContent = Papaparse.unparse(studentRegistrations);
     const csvFile = new Blob([csvContent], { type: "text/csv" });
     const csvBase64 = await toBase64(csvFile);
-    await Share.open({ url: csvBase64, filename: "registrations" });
+    await Share.open({ url: csvBase64, filename: `registrations-${new Date().toISOString()}` });
   }
 
   function handleBarCodeScanned({ data }: { data: string }) {
@@ -111,6 +111,14 @@ export default function Main() {
           onBarCodeScanned={handleBarCodeScanned}
           style={StyleSheet.absoluteFillObject}
         />
+        <Button
+          style={{ position: "absolute", bottom: 35 }}
+          icon="cancel"
+          mode="contained"
+          onPress={() => setShowCamera(false)}
+        >
+          Cerrar scanner
+        </Button>
       </View>
     );
   }
