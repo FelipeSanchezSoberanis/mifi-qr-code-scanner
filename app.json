@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "MIFI QR Scanner",
-    "slug": "mifi-qr-code-scanner",
+    "slug": "MIFI QR Scanner",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
