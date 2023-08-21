@@ -10,11 +10,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { asyncStorages } from "./src/async-storages";
 import Papaparse from "papaparse";
 import Share from "react-native-share";
+import moment from "moment";
+import "moment/locale/es";
+import { datetimeFormat } from "./src/constants";
 
 export default function Main() {
   const [studentRegistrations, setStudentRegistrations] = React.useState<StudentRegistration[]>([]);
   const [hasCameraPermission, setHasCameraPermission] = React.useState<boolean>(false);
-  const [showCamera, setShowCamera] = React.useState<boolean>(true);
+  const [showCamera, setShowCamera] = React.useState<boolean>(false);
 
   function deleteRegisters() {
     Alert.alert("¿Borrar registros?", "Esta acción no puede ser revertida", [
@@ -43,10 +46,18 @@ export default function Main() {
   }
 
   async function saveRegistrations() {
-    const csvContent = Papaparse.unparse(studentRegistrations);
+    let localStudentRegistrations = [...studentRegistrations];
+    localStudentRegistrations = localStudentRegistrations.map((reg) => {
+      const newRegTime = moment(new Date(reg.registrationTime)).format(datetimeFormat);
+      return { ...reg, registrationTime: newRegTime };
+    });
+    const csvContent = Papaparse.unparse(localStudentRegistrations);
     const csvFile = new Blob([csvContent], { type: "text/csv" });
     const csvBase64 = await toBase64(csvFile);
-    await Share.open({ url: csvBase64, filename: `registrations-${new Date().toISOString()}` });
+    await Share.open({
+      url: csvBase64,
+      filename: `asistencia-${moment(new Date()).format(datetimeFormat)}`
+    });
   }
 
   function handleBarCodeScanned({ data }: { data: string }) {
@@ -62,7 +73,7 @@ export default function Main() {
     };
 
     setStudentRegistrations((state) => {
-      const newState = [...state, newReg];
+      const newState = [newReg, ...state];
       AsyncStorage.setItem(asyncStorages.studentRegistrations, JSON.stringify(newState));
       return newState;
     });
