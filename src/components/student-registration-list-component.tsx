@@ -16,10 +16,10 @@ export default function StudentRegistrationsListComponent(props: {
   const [searchTerm, setSearchTerm] = React.useState<string | null>(null);
 
   function prettyStudentInfo(reg: StudentRegistration) {
-    return `Matrícula:\n${reg.enrollmentId ? reg.enrollmentId : "No otorgado"}\n\n
-Correo:\n${reg.email ? reg.email : "No otorgado"}\n\n
-Teléfono:\n${reg.phoneNumber ? reg.phoneNumber : "No otorgado"}\n\n
-Semestre de inicio:\n${reg.startingSemester ? reg.startingSemester : "No otorgado"}\n\n
+    return `Matrícula:\n${reg.enrollmentId || "No otorgado"}\n\n
+Correo:\n${reg.email || "No otorgado"}\n\n
+Teléfono:\n${reg.phoneNumber || "No otorgado"}\n\n
+Semestre de inicio:\n${reg.startingSemester || "No otorgado"}\n\n
 Hora de registro:\n${moment(new Date(reg.registrationTime)).format(datetimeFormat)}\n\n`;
   }
 
