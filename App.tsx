@@ -22,6 +22,20 @@ export default function Main() {
   const [hasCameraPermission, setHasCameraPermission] = React.useState<boolean>(false);
   const [showCamera, setShowCamera] = React.useState<boolean>(false);
 
+  async function deleteRegister(studRegToDelete: StudentRegistration) {
+    const indexToDelete = studentRegistrations.findIndex(
+      (item) => item.registrationTime === studRegToDelete.registrationTime
+    );
+    setStudentRegistrations((currStudRegs) => {
+      currStudRegs.splice(indexToDelete, 1);
+      return [...currStudRegs];
+    });
+    await AsyncStorage.setItem(
+      asyncStorages.studentRegistrations,
+      JSON.stringify(studentRegistrations)
+    );
+  }
+
   function deleteRegisters() {
     Alert.alert("¿Borrar registros?", "Esta acción no puede ser revertida", [
       {
@@ -149,6 +163,7 @@ export default function Main() {
         <StudentRegistrationsListComponent
           style={styles.list}
           studentRegistrations={studentRegistrations}
+          handleDeleteStudentRegistration={deleteRegister}
         />
         <ButtonGroupComponent
           style={styles.buttonGroup}

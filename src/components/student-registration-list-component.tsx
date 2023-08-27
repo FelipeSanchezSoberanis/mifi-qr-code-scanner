@@ -9,11 +9,37 @@ import { datetimeFormat } from "../constants";
 export default function StudentRegistrationsListComponent(props: {
   studentRegistrations: StudentRegistration[];
   style: StyleProp<ViewStyle>;
+  handleDeleteStudentRegistration: (studReg: StudentRegistration) => any;
 }) {
   const [shownStudentRegistrations, setShownStudentRegistrations] = React.useState<
     StudentRegistration[]
   >([]);
   const [searchTerm, setSearchTerm] = React.useState<string | null>(null);
+
+  function deleteRegistration(studReg: StudentRegistration) {
+    Alert.alert("¿Borrar registro?", prettyStudentInfoWithName(studReg), [
+      {
+        text: "Cancelar",
+        style: "cancel"
+      },
+      {
+        text: "Borrar",
+        onPress: () => props.handleDeleteStudentRegistration(studReg),
+        style: "default"
+      }
+    ]);
+  }
+
+  function showPrettyStudentInfo(studentRegistration: StudentRegistration) {
+    Alert.alert(
+      `Información de ${studentRegistration.name}`,
+      prettyStudentInfo(studentRegistration)
+    );
+  }
+
+  function prettyStudentInfoWithName(reg: StudentRegistration) {
+    return `Nombre:\n${reg.name}\n\n` + prettyStudentInfo(reg);
+  }
 
   function prettyStudentInfo(reg: StudentRegistration) {
     return `Matrícula:\n${reg.enrollmentId || "No otorgado"}\n\n
@@ -66,12 +92,10 @@ Hora de registro:\n${moment(new Date(reg.registrationTime)).format(datetimeForma
               description={timePassedSinceReg}
               left={() => <List.Icon icon="account" />}
               right={() => (
-                <IconButton
-                  icon={"eye"}
-                  onPress={() =>
-                    Alert.alert(`Información de ${reg.item.name}`, prettyStudentInfo(reg.item))
-                  }
-                />
+                <>
+                  <IconButton icon="eye" onPress={() => showPrettyStudentInfo(reg.item)} />
+                  <IconButton icon="delete" onPress={() => deleteRegistration(reg.item)} />
+                </>
               )}
             />
           );
