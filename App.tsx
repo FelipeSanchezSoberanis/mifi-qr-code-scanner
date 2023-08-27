@@ -13,6 +13,9 @@ import Share from "react-native-share";
 import moment from "moment";
 import "moment/locale/es";
 import { datetimeFormat } from "./src/constants";
+import * as SplashScreen from "expo-splash-screen";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function Main() {
   const [studentRegistrations, setStudentRegistrations] = React.useState<StudentRegistration[]>([]);
@@ -100,9 +103,15 @@ export default function Main() {
     setStudentRegistrations(savedStudentRegistrations);
   }
 
+  async function initialConfig() {
+    const permissionsPromise = getCameraPermission();
+    const savedRegistrationsPromise = retrieveSavedRegistrations();
+    await Promise.all([permissionsPromise, savedRegistrationsPromise]);
+    await SplashScreen.hideAsync();
+  }
+
   React.useEffect(() => {
-    getCameraPermission();
-    retrieveSavedRegistrations();
+    initialConfig();
   }, []);
 
   if (!hasCameraPermission) {
