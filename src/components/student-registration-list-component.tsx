@@ -88,6 +88,7 @@ Hora de registro:\n${moment(new Date(reg.registrationTime)).format(datetimeForma
 
           return (
             <List.Item
+              style={{ paddingEnd: 0 }}
               title={reg.item.name}
               description={timePassedSinceReg}
               left={() => <List.Icon icon="account" />}
