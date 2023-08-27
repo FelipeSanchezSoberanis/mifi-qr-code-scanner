@@ -1,7 +1,8 @@
 # MIFI Qr Scanner
+
 ## Privacy policy
 
-Welcome to MIFI Qr Scanner app! 
+Welcome to MIFI Qr Scanner app!
 
 This app is made to aid in the registration of the students that attend to MIFI related events in the [Facultad de Ingeniería de la UADY](https://www.ingenieria.uady.mx/index.php).
 
@@ -13,9 +14,9 @@ MIFI attendees' already accepted the collection of their information with the pu
 
 The list of permissions required by the app can be found in the `AndroidManifest.xml` file.
 
-| Permission | Why it is required |
-| :---: | --- |
-| `CAMERA` | To scan attendees' personal QR codes for event attendace tracking.  |
-| `INTERNET` | To allow the sharing of the attendees' attendace to university authorities.  |
-| `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE` | To save locally the attendance records.  |
-| `SYSTEM_ALERT_WINDOW`, `VIBRATE` | To show alerts to the user when making actions inside the app.  |
+|                    Permission                     | Why it is required                                                          |
+| :-----------------------------------------------: | --------------------------------------------------------------------------- |
+|                     `CAMERA`                      | To scan attendees' personal QR codes for event attendace tracking.          |
+|                    `INTERNET`                     | To allow the sharing of the attendees' attendace to university authorities. |
+| `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE` | To save locally the attendance records.                                     |
+|         `SYSTEM_ALERT_WINDOW`, `VIBRATE`          | To show alerts to the user when making actions inside the app.              |
