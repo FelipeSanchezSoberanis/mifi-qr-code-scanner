@@ -126,7 +126,7 @@ export default function Main() {
 
   if (showCamera) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={styles.mainScannerView}>
         <BarCodeScanner
           onBarCodeScanned={handleBarCodeScanned}
           style={StyleSheet.absoluteFillObject}
@@ -176,5 +176,6 @@ const styles = StyleSheet.create({
   buttonGroup: {
     flex: 3,
     marginTop: 25
-  }
+  },
+  mainScannerView: { flex: 1, justifyContent: "center", alignItems: "center" }
 });
