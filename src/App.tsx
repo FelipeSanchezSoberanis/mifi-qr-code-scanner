@@ -1,5 +1,5 @@
 import { Alert, StyleSheet, View } from "react-native";
-import { Button, PaperProvider } from "react-native-paper";
+import { Button, PaperProvider, Modal, Checkbox } from "react-native-paper";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Text } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -11,15 +11,24 @@ import { asyncStorages } from "./async-storages";
 import ButtonGroupComponent from "./components/button-group-component";
 import StudentRegistrationsListComponent from "./components/student-registration-list-component";
 import { datetimeFormat } from "./constants";
-import { StudentRegistration } from "./types";
+import { Career, StudentRegistration } from "./types";
 import { useEffect, useState } from "react";
 
 SplashScreen.preventAutoHideAsync();
 
+const careers: Career[] = [
+  "Ingeniería civil",
+  "Ingeniería mecatrónica",
+  "Ingeniería en energías renovables",
+  "Ingeniería física"
+];
+
 export default function Main() {
   const [studentRegistrations, setStudentRegistrations] = useState<StudentRegistration[]>([]);
-  const [hasCameraPermission, setHasCameraPermission] = useState<boolean>(false);
-  const [showCamera, setShowCamera] = useState<boolean>(false);
+  const [hasCameraPermission, setHasCameraPermission] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
+  const [showCareerSelectModal, setShowCareerSelectModal] = useState(false);
+  const [selectedCareer, setSelectedCareer] = useState<null | Career>(null);
 
   async function deleteRegistration(studRegToDel: StudentRegistration) {
     const indexToDelete = studentRegistrations.findIndex(
@@ -79,6 +88,8 @@ export default function Main() {
   }
 
   function handleBarCodeScanned({ data }: { data: string }) {
+    setShowCamera(false);
+
     const fields = data.split("$");
 
     const newReg: StudentRegistration = {
@@ -87,7 +98,8 @@ export default function Main() {
       startingSemester: fields[2],
       email: fields[3],
       phoneNumber: fields[4] ? Number(fields[4]) : null,
-      registrationTime: new Date().toISOString()
+      registrationTime: new Date().toISOString(),
+      career: ""
     };
 
     setStudentRegistrations((state) => {
@@ -96,7 +108,7 @@ export default function Main() {
       return newState;
     });
 
-    setShowCamera(false);
+    setShowCareerSelectModal(true);
   }
 
   async function getCameraPermission() {
@@ -158,6 +170,10 @@ export default function Main() {
     );
   }
 
+  function handleCareerSelected(): void {
+    setShowCareerSelectModal(false);
+  }
+
   return (
     <PaperProvider>
       <View style={styles.mainView}>
@@ -173,6 +189,26 @@ export default function Main() {
           onSaveRegistrations={shareRegistrations}
           studentRegistrations={studentRegistrations}
         />
+        <Modal
+          visible={showCareerSelectModal}
+          contentContainerStyle={styles.careerSelectModal}
+          dismissable={false}
+        >
+          <Text>Carrera de {studentRegistrations[0].name}</Text>
+          {careers.map((career, i) => (
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Checkbox
+                key={i}
+                status={selectedCareer === career ? "checked" : "unchecked"}
+                onPress={() => setSelectedCareer(career)}
+              />
+              <Text>{career}</Text>
+            </View>
+          ))}
+          <Button disabled={!selectedCareer} mode="contained" onPress={handleCareerSelected}>
+            Seleccionar
+          </Button>
+        </Modal>
       </View>
     </PaperProvider>
   );
@@ -194,5 +230,6 @@ const styles = StyleSheet.create({
     marginTop: 25
   },
   mainScannerView: { flex: 1, justifyContent: "center", alignItems: "center" },
-  noCameraPermissionView: { flex: 1, justifyContent: "center", alignItems: "center" }
+  noCameraPermissionView: { flex: 1, justifyContent: "center", alignItems: "center" },
+  careerSelectModal: { backgroundColor: "white", padding: 25, margin: 50 }
 });

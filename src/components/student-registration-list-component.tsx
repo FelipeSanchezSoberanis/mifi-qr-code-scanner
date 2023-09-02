@@ -1,6 +1,6 @@
 import { IconButton, List, Text, TextInput } from "react-native-paper";
 import { StudentRegistration } from "../types";
-import React from "react";
+import { useState, useEffect } from "react";
 import { Alert, FlatList, StyleProp, View, ViewStyle } from "react-native";
 import moment from "moment";
 import "moment/dist/locale/es";
@@ -11,10 +11,10 @@ export default function StudentRegistrationsListComponent(props: {
   style: StyleProp<ViewStyle>;
   handleDeleteStudentRegistration: (studReg: StudentRegistration) => any;
 }) {
-  const [shownStudentRegistrations, setShownStudentRegistrations] = React.useState<
-    StudentRegistration[]
-  >([]);
-  const [searchTerm, setSearchTerm] = React.useState<string | null>(null);
+  const [shownStudentRegistrations, setShownStudentRegistrations] = useState<StudentRegistration[]>(
+    []
+  );
+  const [searchTerm, setSearchTerm] = useState<string | null>(null);
 
   function deleteRegistration(studReg: StudentRegistration) {
     Alert.alert("¿Borrar registro?", prettyStudentInfoWithName(studReg), [
@@ -43,13 +43,14 @@ export default function StudentRegistrationsListComponent(props: {
 
   function prettyStudentInfo(reg: StudentRegistration) {
     return `Matrícula:\n${reg.enrollmentId || "No otorgado"}\n\n
+Carrera:\n${reg.career || "No otorgado"}\n\n
 Correo:\n${reg.email || "No otorgado"}\n\n
 Teléfono:\n${reg.phoneNumber || "No otorgado"}\n\n
 Semestre de inicio:\n${reg.startingSemester || "No otorgado"}\n\n
 Hora de registro:\n${moment(new Date(reg.registrationTime)).format(datetimeFormat)}\n\n`;
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!searchTerm) {
       setShownStudentRegistrations(props.studentRegistrations);
     } else {
