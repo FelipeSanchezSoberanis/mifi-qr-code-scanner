@@ -1,27 +1,31 @@
 {
   "expo": {
-    "name": "MIFI QR Scanner",
-    "slug": "MIFI QR Scanner",
+    "name": "MIFI Scanner",
+    "slug": "MIFI Scanner",
     "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mifi.mifiscanner"
     },
     "android": {
-      "permissions": ["android.permission.WRITE_EXTERNAL_STORAGE"],
+      "permissions": [
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.mifiqrcodescanner"
+      "package": "com.mifi.mifiscanner"
     },
     "web": {
       "favicon": "./assets/favicon.png"

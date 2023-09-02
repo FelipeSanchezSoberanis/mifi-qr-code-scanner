@@ -1,30 +1,29 @@
-import * as React from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import { Button, PaperProvider } from "react-native-paper";
-import { StudentRegistration } from "./src/types";
-import StudentRegistrationsListComponent from "./src/components/student-registration-list-component";
-import ButtonGroupComponent from "./src/components/button-group-component";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Text } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { asyncStorages } from "./src/async-storages";
 import Papaparse from "papaparse";
 import Share from "react-native-share";
 import moment from "moment";
-import "moment/locale/es";
-import { datetimeFormat } from "./src/constants";
 import * as SplashScreen from "expo-splash-screen";
+import { asyncStorages } from "./async-storages";
+import ButtonGroupComponent from "./components/button-group-component";
+import StudentRegistrationsListComponent from "./components/student-registration-list-component";
+import { datetimeFormat } from "./constants";
+import { StudentRegistration } from "./types";
+import { useEffect, useState } from "react";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function Main() {
-  const [studentRegistrations, setStudentRegistrations] = React.useState<StudentRegistration[]>([]);
-  const [hasCameraPermission, setHasCameraPermission] = React.useState<boolean>(false);
-  const [showCamera, setShowCamera] = React.useState<boolean>(false);
+  const [studentRegistrations, setStudentRegistrations] = useState<StudentRegistration[]>([]);
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean>(false);
+  const [showCamera, setShowCamera] = useState<boolean>(false);
 
-  async function deleteRegister(studRegToDelete: StudentRegistration) {
+  async function deleteRegistration(studRegToDel: StudentRegistration) {
     const indexToDelete = studentRegistrations.findIndex(
-      (item) => item.registrationTime === studRegToDelete.registrationTime
+      (item) => item.registrationTime === studRegToDel.registrationTime
     );
     setStudentRegistrations((currStudRegs) => {
       currStudRegs.splice(indexToDelete, 1);
@@ -36,7 +35,7 @@ export default function Main() {
     );
   }
 
-  function deleteRegisters() {
+  async function deleteRegistrations() {
     Alert.alert("¿Borrar registros?", "Esta acción no puede ser revertida", [
       {
         text: "Cancelar",
@@ -44,16 +43,18 @@ export default function Main() {
       },
       {
         text: "Borrar",
-        onPress: () => {
-          setStudentRegistrations([]);
-          AsyncStorage.removeItem(asyncStorages.studentRegistrations);
-        },
+        onPress: () => handleAcceptToDeleteRegistrations(),
         style: "default"
       }
     ]);
   }
 
-  async function toBase64(input: Blob): Promise<string> {
+  async function handleAcceptToDeleteRegistrations() {
+    setStudentRegistrations([]);
+    await AsyncStorage.removeItem(asyncStorages.studentRegistrations);
+  }
+
+  async function blobToBase64(input: Blob): Promise<string> {
     return new Promise((resolve, reject) => {
       const fileReader = new FileReader();
       fileReader.onload = () => resolve(fileReader.result as string);
@@ -62,7 +63,7 @@ export default function Main() {
     });
   }
 
-  async function saveRegistrations() {
+  async function shareRegistrations() {
     let localStudentRegistrations = [...studentRegistrations];
     localStudentRegistrations = localStudentRegistrations.map((reg) => {
       const newRegTime = moment(new Date(reg.registrationTime)).format(datetimeFormat);
@@ -70,7 +71,7 @@ export default function Main() {
     });
     const csvContent = Papaparse.unparse(localStudentRegistrations);
     const csvFile = new Blob([csvContent], { type: "text/csv" });
-    const csvBase64 = await toBase64(csvFile);
+    const csvBase64 = await blobToBase64(csvFile);
     await Share.open({
       url: csvBase64,
       filename: `asistencia-${moment(new Date()).format(datetimeFormat)}`
@@ -124,13 +125,13 @@ export default function Main() {
     await SplashScreen.hideAsync();
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     initialConfig();
   }, []);
 
   if (!hasCameraPermission) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={styles.noCameraPermissionView}>
         <Text variant="titleLarge" style={{ textAlign: "center" }}>
           La cámara es necesaria para poder utilizar la aplicación
         </Text>
@@ -163,13 +164,13 @@ export default function Main() {
         <StudentRegistrationsListComponent
           style={styles.list}
           studentRegistrations={studentRegistrations}
-          handleDeleteStudentRegistration={deleteRegister}
+          handleDeleteStudentRegistration={deleteRegistration}
         />
         <ButtonGroupComponent
           style={styles.buttonGroup}
           onShowCamera={() => setShowCamera(true)}
-          onDeleteRegistrations={deleteRegisters}
-          onSaveRegistrations={saveRegistrations}
+          onDeleteRegistrations={deleteRegistrations}
+          onSaveRegistrations={shareRegistrations}
           studentRegistrations={studentRegistrations}
         />
       </View>
@@ -192,5 +193,6 @@ const styles = StyleSheet.create({
     flex: 3,
     marginTop: 25
   },
-  mainScannerView: { flex: 1, justifyContent: "center", alignItems: "center" }
+  mainScannerView: { flex: 1, justifyContent: "center", alignItems: "center" },
+  noCameraPermissionView: { flex: 1, justifyContent: "center", alignItems: "center" }
 });
