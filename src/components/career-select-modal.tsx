@@ -15,7 +15,7 @@ const careers: Career[] = [
 export default function CareerSelectModal(props: {
   show: boolean;
   studentRegistrations: StudentRegistration[];
-  handleCareerSelected: (career: Career) => any;
+  handleCareerSelected: (career: Career | null) => any;
 }) {
   const [selectedCareer, setSelectedCareer] = useState<null | Career>(null);
 

@@ -1,5 +1,5 @@
 import { Alert, StyleSheet, View } from "react-native";
-import { Button, PaperProvider, Modal, Checkbox } from "react-native-paper";
+import { Button, PaperProvider } from "react-native-paper";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Text } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -14,6 +14,7 @@ import { datetimeFormat } from "./constants";
 import { Career, StudentRegistration } from "./types";
 import { useEffect, useState } from "react";
 import CareerSelectModal from "./components/career-select-modal";
+import { blobToBase64 } from "./utils/file-utils";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -45,15 +46,6 @@ export default function Main() {
         style: "default"
       }
     ]);
-  }
-
-  async function blobToBase64(input: Blob): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-      fileReader.onload = () => resolve(fileReader.result as string);
-      fileReader.onerror = () => reject();
-      fileReader.readAsDataURL(input);
-    });
   }
 
   async function shareRegistrations() {
