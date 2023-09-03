@@ -2,7 +2,7 @@
   "expo": {
     "name": "MIFI Scanner",
     "slug": "MIFI Scanner",
-    "version": "1.0.1",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -10,17 +10,10 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.mifi.mifiscanner"
-    },
+    "assetBundlePatterns": ["**/*"],
     "android": {
-      "permissions": [
-        "android.permission.WRITE_EXTERNAL_STORAGE"
-      ],
+      "versionCode": 3,
+      "permissions": ["android.permission.WRITE_EXTERNAL_STORAGE"],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
