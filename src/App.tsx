@@ -38,13 +38,9 @@ export default function Main() {
       currStudRegs.splice(indexToDelete, 1);
       return [...currStudRegs];
     });
-    await AsyncStorage.setItem(
-      asyncStorages.studentRegistrations,
-      JSON.stringify(studentRegistrations)
-    );
   }
 
-  async function deleteRegistrations() {
+  function deleteRegistrations() {
     Alert.alert("¿Borrar registros?", "Esta acción no puede ser revertida", [
       {
         text: "Cancelar",
@@ -52,15 +48,10 @@ export default function Main() {
       },
       {
         text: "Borrar",
-        onPress: () => handleAcceptToDeleteRegistrations(),
+        onPress: () => setStudentRegistrations([]),
         style: "default"
       }
     ]);
-  }
-
-  async function handleAcceptToDeleteRegistrations() {
-    setStudentRegistrations([]);
-    await AsyncStorage.removeItem(asyncStorages.studentRegistrations);
   }
 
   async function blobToBase64(input: Blob): Promise<string> {
@@ -88,8 +79,6 @@ export default function Main() {
   }
 
   function handleBarCodeScanned({ data }: { data: string }) {
-    setShowCamera(false);
-
     const fields = data.split("$");
 
     const newReg: StudentRegistration = {
@@ -102,12 +91,9 @@ export default function Main() {
       career: ""
     };
 
-    setStudentRegistrations((state) => {
-      const newState = [newReg, ...state];
-      AsyncStorage.setItem(asyncStorages.studentRegistrations, JSON.stringify(newState));
-      return newState;
-    });
+    setStudentRegistrations((state) => [newReg, ...state]);
 
+    setShowCamera(false);
     setShowCareerSelectModal(true);
   }
 
@@ -130,6 +116,18 @@ export default function Main() {
     setStudentRegistrations(savedStudentRegistrations);
   }
 
+  function handleCareerSelected(): void {
+    setStudentRegistrations((currStudReg) => {
+      const lastStudReg = currStudReg.shift();
+      if (!lastStudReg || !selectedCareer) throw new Error();
+      lastStudReg.career = selectedCareer;
+      return [lastStudReg, ...currStudReg];
+    });
+
+    setSelectedCareer(null);
+    setShowCareerSelectModal(false);
+  }
+
   async function initialConfig() {
     const permissionsPromise = getCameraPermission();
     const savedRegistrationsPromise = retrieveSavedRegistrations();
@@ -140,6 +138,10 @@ export default function Main() {
   useEffect(() => {
     initialConfig();
   }, []);
+
+  useEffect(() => {
+    AsyncStorage.setItem(asyncStorages.studentRegistrations, JSON.stringify(studentRegistrations));
+  }, [studentRegistrations]);
 
   if (!hasCameraPermission) {
     return (
@@ -170,10 +172,6 @@ export default function Main() {
     );
   }
 
-  function handleCareerSelected(): void {
-    setShowCareerSelectModal(false);
-  }
-
   return (
     <PaperProvider>
       <View style={styles.mainView}>
@@ -194,18 +192,24 @@ export default function Main() {
           contentContainerStyle={styles.careerSelectModal}
           dismissable={false}
         >
-          <Text>Carrera de {studentRegistrations[0].name}</Text>
+          <Text variant="titleMedium" style={{ marginBottom: 15, textAlign: "center" }}>
+            Carrera de {studentRegistrations[0]?.name}
+          </Text>
           {careers.map((career, i) => (
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View key={i} style={{ flexDirection: "row", alignItems: "center" }}>
               <Checkbox
-                key={i}
                 status={selectedCareer === career ? "checked" : "unchecked"}
                 onPress={() => setSelectedCareer(career)}
               />
               <Text>{career}</Text>
             </View>
           ))}
-          <Button disabled={!selectedCareer} mode="contained" onPress={handleCareerSelected}>
+          <Button
+            style={{ marginTop: 15 }}
+            disabled={!selectedCareer}
+            mode="contained"
+            onPress={handleCareerSelected}
+          >
             Seleccionar
           </Button>
         </Modal>
