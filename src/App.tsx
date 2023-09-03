@@ -13,22 +13,15 @@ import StudentRegistrationsListComponent from "./components/student-registration
 import { datetimeFormat } from "./constants";
 import { Career, StudentRegistration } from "./types";
 import { useEffect, useState } from "react";
+import CareerSelectModal from "./components/career-select-modal";
 
 SplashScreen.preventAutoHideAsync();
-
-const careers: Career[] = [
-  "Ingeniería civil",
-  "Ingeniería mecatrónica",
-  "Ingeniería en energías renovables",
-  "Ingeniería física"
-];
 
 export default function Main() {
   const [studentRegistrations, setStudentRegistrations] = useState<StudentRegistration[]>([]);
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
   const [showCareerSelectModal, setShowCareerSelectModal] = useState(false);
-  const [selectedCareer, setSelectedCareer] = useState<null | Career>(null);
 
   async function deleteRegistration(studRegToDel: StudentRegistration) {
     const indexToDelete = studentRegistrations.findIndex(
@@ -116,7 +109,7 @@ export default function Main() {
     setStudentRegistrations(savedStudentRegistrations);
   }
 
-  function handleCareerSelected(): void {
+  function handleCareerSelected(selectedCareer: Career | null): void {
     setStudentRegistrations((currStudReg) => {
       const lastStudReg = currStudReg.shift();
       if (!lastStudReg || !selectedCareer) throw new Error();
@@ -124,7 +117,6 @@ export default function Main() {
       return [lastStudReg, ...currStudReg];
     });
 
-    setSelectedCareer(null);
     setShowCareerSelectModal(false);
   }
 
@@ -187,32 +179,11 @@ export default function Main() {
           onSaveRegistrations={shareRegistrations}
           studentRegistrations={studentRegistrations}
         />
-        <Modal
-          visible={showCareerSelectModal}
-          contentContainerStyle={styles.careerSelectModal}
-          dismissable={false}
-        >
-          <Text variant="titleMedium" style={{ marginBottom: 15, textAlign: "center" }}>
-            Carrera de {studentRegistrations[0]?.name}
-          </Text>
-          {careers.map((career, i) => (
-            <View key={i} style={{ flexDirection: "row", alignItems: "center" }}>
-              <Checkbox
-                status={selectedCareer === career ? "checked" : "unchecked"}
-                onPress={() => setSelectedCareer(career)}
-              />
-              <Text>{career}</Text>
-            </View>
-          ))}
-          <Button
-            style={{ marginTop: 15 }}
-            disabled={!selectedCareer}
-            mode="contained"
-            onPress={handleCareerSelected}
-          >
-            Seleccionar
-          </Button>
-        </Modal>
+        <CareerSelectModal
+          show={showCareerSelectModal}
+          studentRegistrations={studentRegistrations}
+          handleCareerSelected={(selectedCareer) => handleCareerSelected(selectedCareer)}
+        />
       </View>
     </PaperProvider>
   );
