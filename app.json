@@ -18,10 +18,13 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.mifi.mifiscanner"
+      "package": "com.anonymous.mifiqrcodescanner"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "ios": {
+      "bundleIdentifier": "com.anonymous.mifiqrcodescanner"
     }
   }
 }

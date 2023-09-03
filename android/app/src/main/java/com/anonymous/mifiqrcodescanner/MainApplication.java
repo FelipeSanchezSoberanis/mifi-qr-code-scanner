@@ -1,4 +1,4 @@
-package com.mifi.mifiscanner;
+package com.anonymous.mifiqrcodescanner;
 
 import android.app.Application;
 import android.content.res.Configuration;
