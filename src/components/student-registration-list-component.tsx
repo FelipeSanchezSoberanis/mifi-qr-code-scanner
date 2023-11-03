@@ -55,7 +55,9 @@ Hora de registro:\n${moment(new Date(reg.registrationTime)).format(datetimeForma
       setShownStudentRegistrations(props.studentRegistrations);
     } else {
       setShownStudentRegistrations(
-        props.studentRegistrations.filter((reg) => reg.name.includes(searchTerm))
+        props.studentRegistrations.filter((reg) =>
+          reg.name.toUpperCase().includes(searchTerm.toUpperCase())
+        )
       );
     }
   }, [searchTerm, props.studentRegistrations]);
