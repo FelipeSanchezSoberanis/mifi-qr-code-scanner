@@ -11,9 +11,8 @@ import { asyncStorages } from "./async-storages";
 import ButtonGroupComponent from "./components/button-group-component";
 import StudentRegistrationsListComponent from "./components/student-registration-list-component";
 import { datetimeFormat } from "./constants";
-import { Career, StudentRegistration } from "./types";
+import { StudentRegistration } from "./types";
 import { useEffect, useState } from "react";
-import CareerSelectModal from "./components/career-select-modal";
 import { blobToBase64 } from "./utils/file-utils";
 
 SplashScreen.preventAutoHideAsync();
@@ -22,7 +21,6 @@ export default function Main() {
   const [studentRegistrations, setStudentRegistrations] = useState<StudentRegistration[]>([]);
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
-  const [showCareerSelectModal, setShowCareerSelectModal] = useState(false);
 
   async function deleteRegistration(studRegToDel: StudentRegistration) {
     const indexToDelete = studentRegistrations.findIndex(
@@ -57,29 +55,24 @@ export default function Main() {
     const csvContent = Papaparse.unparse(localStudentRegistrations);
     const csvFile = new Blob([csvContent], { type: "text/csv" });
     const csvBase64 = await blobToBase64(csvFile);
-    await Share.open({
-      url: csvBase64,
-      filename: `asistencia-${moment(new Date()).format(datetimeFormat)}`
-    });
+
+    try {
+      await Share.open({
+        url: csvBase64,
+        filename: `asistencia-${moment(new Date()).format(datetimeFormat)}`
+      });
+    } catch {}
   }
 
   function handleBarCodeScanned({ data }: { data: string }) {
-    const fields = data.split("$");
-
     const newReg: StudentRegistration = {
-      name: fields[0],
-      enrollmentId: fields[1] ? Number(fields[1]) : null,
-      startingSemester: fields[2],
-      email: fields[3],
-      phoneNumber: fields[4] ? Number(fields[4]) : null,
-      registrationTime: new Date().toISOString(),
-      career: ""
+      ...JSON.parse(data),
+      registrationTime: new Date().toISOString()
     };
 
     setStudentRegistrations((state) => [newReg, ...state]);
 
     setShowCamera(false);
-    setShowCareerSelectModal(true);
   }
 
   async function getCameraPermission() {
@@ -99,17 +92,6 @@ export default function Main() {
     ) as StudentRegistration[];
 
     setStudentRegistrations(savedStudentRegistrations);
-  }
-
-  function handleCareerSelected(selectedCareer: Career | null): void {
-    setStudentRegistrations((currStudReg) => {
-      const lastStudReg = currStudReg.shift();
-      if (!lastStudReg || !selectedCareer) throw new Error();
-      lastStudReg.career = selectedCareer;
-      return [lastStudReg, ...currStudReg];
-    });
-
-    setShowCareerSelectModal(false);
   }
 
   async function initialConfig() {
@@ -170,11 +152,6 @@ export default function Main() {
           onDeleteRegistrations={deleteRegistrations}
           onSaveRegistrations={shareRegistrations}
           studentRegistrations={studentRegistrations}
-        />
-        <CareerSelectModal
-          show={showCareerSelectModal}
-          studentRegistrations={studentRegistrations}
-          handleCareerSelected={(selectedCareer) => handleCareerSelected(selectedCareer)}
         />
       </View>
     </PaperProvider>
