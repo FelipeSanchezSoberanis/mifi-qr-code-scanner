@@ -1,13 +1,13 @@
-export interface Student {
+export interface QrCodeData {
   name: string;
   startingSemester: string;
-  enrollmentId: number | null;
+  enrollmentId: string;
   email: string;
-  phoneNumber: number | null;
+  phoneNumber: string;
   career: string;
 }
 
-export interface StudentRegistration extends Student {
+export interface StudentRegistration extends QrCodeData {
   registrationTime: string;
 }
 

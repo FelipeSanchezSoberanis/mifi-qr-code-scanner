@@ -11,7 +11,7 @@ import { asyncStorages } from "./async-storages";
 import ButtonGroupComponent from "./components/button-group-component";
 import StudentRegistrationsListComponent from "./components/student-registration-list-component";
 import { datetimeFormat } from "./constants";
-import { StudentRegistration } from "./types";
+import { QrCodeData, StudentRegistration } from "./types";
 import { useEffect, useState } from "react";
 import { blobToBase64 } from "./utils/file-utils";
 
@@ -65,8 +65,22 @@ export default function Main() {
   }
 
   function handleBarCodeScanned({ data }: { data: string }) {
+    const dataArray = JSON.parse(data) as string[];
+
+    const qrCodeData: QrCodeData = {
+      career: "",
+      email: "",
+      enrollmentId: "",
+      name: "",
+      phoneNumber: "",
+      startingSemester: ""
+    };
+    const qrCodeDataKeys = (Object.keys(qrCodeData) as (keyof QrCodeData)[]).sort();
+
+    for (let i = 0; i < dataArray.length; i++) qrCodeData[qrCodeDataKeys[i]] = dataArray[i];
+
     const newReg: StudentRegistration = {
-      ...JSON.parse(data),
+      ...qrCodeData,
       registrationTime: new Date().toISOString()
     };
 
