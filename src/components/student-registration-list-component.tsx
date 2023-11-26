@@ -42,12 +42,14 @@ export default function StudentRegistrationsListComponent(props: {
   }
 
   function prettyStudentInfo(reg: StudentRegistration) {
+    const registrationTime = moment(new Date(reg.registrationTime));
+
     return `Matrícula:\n${reg.enrollmentId || "No otorgado"}\n\n
 Carrera:\n${reg.career || "No otorgado"}\n\n
 Correo:\n${reg.email || "No otorgado"}\n\n
 Teléfono:\n${reg.phoneNumber || "No otorgado"}\n\n
 Semestre de inicio:\n${reg.startingSemester || "No otorgado"}\n\n
-Hora de registro:\n${moment(new Date(reg.registrationTime)).format(datetimeFormat)}\n\n`;
+Hora de registro:\n${registrationTime.format(datetimeFormat)}\n(${registrationTime.fromNow()})\n\n`;
   }
 
   useEffect(() => {
