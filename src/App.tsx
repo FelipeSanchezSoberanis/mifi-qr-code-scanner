@@ -1,68 +1,27 @@
-import { Alert, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Button, PaperProvider } from "react-native-paper";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Text } from "react-native-paper";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import Papaparse from "papaparse";
-import Share from "react-native-share";
-import moment from "moment";
 import * as SplashScreen from "expo-splash-screen";
-import { asyncStorages } from "./async-storages";
 import ButtonGroupComponent from "./components/button-group-component";
 import StudentRegistrationsListComponent from "./components/student-registration-list-component";
-import { datetimeFormat } from "./constants";
 import { QrCodeData, StudentRegistration } from "./types";
 import { useEffect, useState } from "react";
-import { blobToBase64 } from "./utils/file-utils";
+import useStudentRegistrations from "./hooks/student-registrations";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function Main() {
-  const [studentRegistrations, setStudentRegistrations] = useState<StudentRegistration[]>([]);
+  const [
+    studentRegistrations,
+    addStudentRegistration,
+    deleteStudentRegistration,
+    deleteAllStudentRegistrations,
+    shareStudentRegistrations,
+    retrieveSavedStudentRegistrations
+  ] = useStudentRegistrations();
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
-
-  async function deleteRegistration(studRegToDel: StudentRegistration) {
-    const indexToDelete = studentRegistrations.findIndex(
-      (item) => item.registrationTime === studRegToDel.registrationTime
-    );
-    setStudentRegistrations((currStudRegs) => {
-      currStudRegs.splice(indexToDelete, 1);
-      return [...currStudRegs];
-    });
-  }
-
-  function deleteRegistrations() {
-    Alert.alert("¿Borrar registros?", "Esta acción no puede ser revertida", [
-      {
-        text: "Cancelar",
-        style: "cancel"
-      },
-      {
-        text: "Borrar",
-        onPress: () => setStudentRegistrations([]),
-        style: "default"
-      }
-    ]);
-  }
-
-  async function shareRegistrations() {
-    let localStudentRegistrations = [...studentRegistrations];
-    localStudentRegistrations = localStudentRegistrations.map((reg) => {
-      const newRegTime = moment(new Date(reg.registrationTime)).format(datetimeFormat);
-      return { ...reg, registrationTime: newRegTime };
-    });
-    const csvContent = Papaparse.unparse(localStudentRegistrations);
-    const csvFile = new Blob([csvContent], { type: "text/csv" });
-    const csvBase64 = await blobToBase64(csvFile);
-
-    try {
-      await Share.open({
-        url: csvBase64,
-        filename: `asistencia-${moment(new Date()).format(datetimeFormat)}`
-      });
-    } catch {}
-  }
 
   function handleBarCodeScanned({ data }: { data: string }) {
     const dataArray = JSON.parse(data) as string[];
@@ -84,7 +43,7 @@ export default function Main() {
       registrationTime: new Date().toISOString()
     };
 
-    setStudentRegistrations((state) => [newReg, ...state]);
+    addStudentRegistration(newReg);
 
     setShowCamera(false);
   }
@@ -94,23 +53,9 @@ export default function Main() {
     setHasCameraPermission(status === "granted");
   }
 
-  async function retrieveSavedRegistrations() {
-    const savedStudentRegistrationsString = await AsyncStorage.getItem(
-      asyncStorages.studentRegistrations
-    );
-
-    if (!savedStudentRegistrationsString) return;
-
-    const savedStudentRegistrations = JSON.parse(
-      savedStudentRegistrationsString
-    ) as StudentRegistration[];
-
-    setStudentRegistrations(savedStudentRegistrations);
-  }
-
   async function initialConfig() {
     const permissionsPromise = getCameraPermission();
-    const savedRegistrationsPromise = retrieveSavedRegistrations();
+    const savedRegistrationsPromise = retrieveSavedStudentRegistrations();
     await Promise.all([permissionsPromise, savedRegistrationsPromise]);
     await SplashScreen.hideAsync();
   }
@@ -118,10 +63,6 @@ export default function Main() {
   useEffect(() => {
     initialConfig();
   }, []);
-
-  useEffect(() => {
-    AsyncStorage.setItem(asyncStorages.studentRegistrations, JSON.stringify(studentRegistrations));
-  }, [studentRegistrations]);
 
   if (!hasCameraPermission) {
     return (
@@ -158,13 +99,13 @@ export default function Main() {
         <StudentRegistrationsListComponent
           style={styles.list}
           studentRegistrations={studentRegistrations}
-          handleDeleteStudentRegistration={deleteRegistration}
+          handleDeleteStudentRegistration={deleteStudentRegistration}
         />
         <ButtonGroupComponent
           style={styles.buttonGroup}
           onShowCamera={() => setShowCamera(true)}
-          onDeleteRegistrations={deleteRegistrations}
-          onSaveRegistrations={shareRegistrations}
+          onDeleteRegistrations={deleteAllStudentRegistrations}
+          onSaveRegistrations={shareStudentRegistrations}
           studentRegistrations={studentRegistrations}
         />
       </View>
