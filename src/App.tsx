@@ -12,14 +12,7 @@ import useStudentRegistrations from "./hooks/student-registrations";
 SplashScreen.preventAutoHideAsync();
 
 export default function Main() {
-  const [
-    studentRegistrations,
-    addStudentRegistration,
-    deleteStudentRegistration,
-    deleteAllStudentRegistrations,
-    shareStudentRegistrations,
-    retrieveSavedStudentRegistrations
-  ] = useStudentRegistrations();
+  const [studentRegistrations, studentRegistrationsReducer] = useStudentRegistrations();
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
 
@@ -38,12 +31,12 @@ export default function Main() {
 
     for (let i = 0; i < dataArray.length; i++) qrCodeData[qrCodeDataKeys[i]] = dataArray[i];
 
-    const newReg: StudentRegistration = {
+    const newStudentRegistration: StudentRegistration = {
       ...qrCodeData,
       registrationTime: new Date().toISOString()
     };
 
-    addStudentRegistration(newReg);
+    studentRegistrationsReducer(["add", newStudentRegistration]);
 
     setShowCamera(false);
   }
@@ -55,7 +48,7 @@ export default function Main() {
 
   async function initialConfig() {
     const permissionsPromise = getCameraPermission();
-    const savedRegistrationsPromise = retrieveSavedStudentRegistrations();
+    const savedRegistrationsPromise = studentRegistrationsReducer(["retrieveSaved"]);
     await Promise.all([permissionsPromise, savedRegistrationsPromise]);
     await SplashScreen.hideAsync();
   }
@@ -99,13 +92,15 @@ export default function Main() {
         <StudentRegistrationsListComponent
           style={styles.list}
           studentRegistrations={studentRegistrations}
-          handleDeleteStudentRegistration={deleteStudentRegistration}
+          handleDeleteStudentRegistration={(studentRegistrationToDelete) =>
+            studentRegistrationsReducer(["delete", studentRegistrationToDelete])
+          }
         />
         <ButtonGroupComponent
           style={styles.buttonGroup}
           onShowCamera={() => setShowCamera(true)}
-          onDeleteRegistrations={deleteAllStudentRegistrations}
-          onSaveRegistrations={shareStudentRegistrations}
+          onDeleteRegistrations={() => studentRegistrationsReducer(["deleteAll"])}
+          onSaveRegistrations={() => studentRegistrationsReducer(["share"])}
           studentRegistrations={studentRegistrations}
         />
       </View>

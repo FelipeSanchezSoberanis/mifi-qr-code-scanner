@@ -9,6 +9,13 @@ import { datetimeFormat } from "../constants";
 import { blobToBase64 } from "../utils/file-utils";
 import { asyncStorages } from "../async-storages";
 
+export type StudentRegistrationsReducerType =
+  | ["add", StudentRegistration]
+  | ["delete", StudentRegistration]
+  | ["deleteAll"]
+  | ["share"]
+  | ["retrieveSaved"];
+
 export default function useStudentRegistrations() {
   const [studentRegistrations, setStudentRegistrations] = useState<StudentRegistration[]>([]);
   const [doneRetrievingSavedStudentRegistrations, setDoneRetrievingSavedStudentRegistrations] =
@@ -80,12 +87,28 @@ export default function useStudentRegistrations() {
     AsyncStorage.setItem(asyncStorages.studentRegistrations, JSON.stringify(studentRegistrations));
   }, [studentRegistrations]);
 
-  return [
-    studentRegistrations,
-    addStudentRegistration,
-    deleteStudentRegistration,
-    deleteAllStudentRegistrations,
-    shareStudentRegistrations,
-    retrieveSavedStudentRegistrations
-  ] as const;
+  const studentRegistrationsReducer = async ([
+    action,
+    payload
+  ]: StudentRegistrationsReducerType) => {
+    switch (action) {
+      case "add":
+        addStudentRegistration(payload);
+        break;
+      case "delete":
+        deleteStudentRegistration(payload);
+        break;
+      case "deleteAll":
+        deleteAllStudentRegistrations();
+        break;
+      case "share":
+        await shareStudentRegistrations();
+        break;
+      case "retrieveSaved":
+        await retrieveSavedStudentRegistrations();
+        break;
+    }
+  };
+
+  return [studentRegistrations, studentRegistrationsReducer] as const;
 }
