@@ -2,7 +2,7 @@
   "expo": {
     "name": "MIFI Scanner",
     "slug": "MIFI Scanner",
-    "version": "1.0.3",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -12,7 +12,7 @@
     },
     "assetBundlePatterns": ["**/*"],
     "android": {
-      "versionCode": 3,
+      "versionCode": 4,
       "permissions": ["android.permission.WRITE_EXTERNAL_STORAGE"],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
