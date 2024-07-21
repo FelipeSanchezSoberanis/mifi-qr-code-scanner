@@ -35,6 +35,6 @@ yarn-error.*
 *.tsbuildinfo
 
 .vscode
-android/
-builds/*.aab
+/android
+builds/**/*.aab
 
