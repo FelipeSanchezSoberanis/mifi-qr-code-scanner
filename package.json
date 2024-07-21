@@ -7,7 +7,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "build:android": "eas build --platform android --local --output builds/android/$(date -Iseconds).aab"
+    "build:android": "eas build --platform android --local --output builds/android/$(date +%Y-%m-%dT%H-%M-%S%z).aab",
+    "prebuild:android": "npx expo prebuild --platform android"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.18.2",
