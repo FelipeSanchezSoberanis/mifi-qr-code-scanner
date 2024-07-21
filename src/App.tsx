@@ -1,6 +1,5 @@
 import { StyleSheet, View } from "react-native";
 import { Button, PaperProvider } from "react-native-paper";
-import { BarCodeScanner } from "expo-barcode-scanner";
 import { Text } from "react-native-paper";
 import * as SplashScreen from "expo-splash-screen";
 import ButtonGroupComponent from "./components/button-group-component";
@@ -8,6 +7,7 @@ import StudentRegistrationsListComponent from "./components/student-registration
 import { QrCodeData, StudentRegistration } from "./types";
 import { useEffect, useState } from "react";
 import useStudentRegistrations from "./hooks/student-registrations";
+import { CameraView, Camera, PermissionStatus } from "expo-camera";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -42,8 +42,9 @@ export default function Main() {
   }
 
   async function getCameraPermission() {
-    const { status } = await BarCodeScanner.requestPermissionsAsync();
-    setHasCameraPermission(status === "granted");
+    const { status } = await Camera.requestCameraPermissionsAsync();
+    console.log({ status });
+    setHasCameraPermission(status === PermissionStatus.GRANTED);
   }
 
   async function initialConfig() {
@@ -70,10 +71,7 @@ export default function Main() {
   if (showCamera) {
     return (
       <View style={styles.mainScannerView}>
-        <BarCodeScanner
-          onBarCodeScanned={handleBarCodeScanned}
-          style={StyleSheet.absoluteFillObject}
-        />
+        <CameraView onBarcodeScanned={handleBarCodeScanned} style={StyleSheet.absoluteFillObject} />
         <Button
           style={{ position: "absolute", bottom: 35 }}
           icon="cancel"

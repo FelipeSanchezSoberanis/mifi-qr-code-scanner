@@ -55,12 +55,10 @@ export default function useStudentRegistrations() {
     const csvFile = new Blob([csvContent], { type: "text/csv" });
     const csvBase64 = await blobToBase64(csvFile);
 
-    try {
-      await Share.open({
-        url: csvBase64,
-        filename: `asistencia-${moment(new Date()).format(datetimeFormat)}`
-      });
-    } catch {}
+    await Share.open({
+      url: csvBase64,
+      filename: `asistencia-${moment(new Date()).format(datetimeFormat)}`
+    });
   };
 
   const retrieveSavedStudentRegistrations = async () => {
