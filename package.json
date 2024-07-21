@@ -6,7 +6,8 @@
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "build:android": "eas build --platform android --local --output builds/android/$(date -Iseconds).aab"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.18.2",
@@ -17,7 +18,7 @@
     "moment": "^2.29.4",
     "papaparse": "^5.4.1",
     "react": "18.2.0",
-    "react-native": "0.72.4",
+    "react-native": "0.72.10",
     "react-native-paper": "^5.10.1",
     "react-native-safe-area-context": "4.6.3",
     "react-native-share": "^9.2.3",

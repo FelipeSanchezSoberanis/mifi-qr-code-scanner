@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "MIFI Scanner",
-    "slug": "MIFI Scanner",
+    "slug": "mifi-scanner",
     "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,6 +25,11 @@
     },
     "ios": {
       "bundleIdentifier": "com.anonymous.mifiqrcodescanner"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e5910f43-e69b-436d-8bc5-dc86cc85e927"
+      }
     }
   }
 }
