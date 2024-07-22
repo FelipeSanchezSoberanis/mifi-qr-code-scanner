@@ -1,6 +1,6 @@
 {
   "name": "mifi-qr-code-scanner",
-  "version": "1.0.1",
+  "version": "1.1.1",
   "main": "./main.ts",
   "scripts": {
     "start": "expo start",

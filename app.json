@@ -2,7 +2,7 @@
   "expo": {
     "name": "MIFI Scanner",
     "slug": "mifi-scanner",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -12,7 +12,7 @@
     },
     "assetBundlePatterns": ["**/*"],
     "android": {
-      "versionCode": 7,
+      "versionCode": 9,
       "permissions": ["android.permission.WRITE_EXTERNAL_STORAGE"],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -37,9 +37,9 @@
         {
           "android": {
             "buildToolsVersion": "34.0.0",
-            "compileSdkVersion": 34,
-            "minSdkVersion": 34,
-            "targetSdkVersion": 34
+            "minSdkVersion": 23,
+            "targetSdkVersion": 34,
+            "compileSdkVersion": 34
           }
         }
       ]
