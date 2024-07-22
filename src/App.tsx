@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { Appearance, StyleSheet, View } from "react-native";
 import { Button, PaperProvider } from "react-native-paper";
 import { Text } from "react-native-paper";
 import * as SplashScreen from "expo-splash-screen";
@@ -46,7 +46,12 @@ export default function Main() {
     setHasCameraPermission(status === PermissionStatus.GRANTED);
   }
 
+  const forceLightMode = () => {
+    Appearance.setColorScheme("light");
+  };
+
   async function initialConfig() {
+    forceLightMode();
     const permissionsPromise = getCameraPermission();
     const savedRegistrationsPromise = studentRegistrationsReducer(["retrieveSaved"]);
     await Promise.all([permissionsPromise, savedRegistrationsPromise]);
