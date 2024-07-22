@@ -43,7 +43,6 @@ export default function Main() {
 
   async function getCameraPermission() {
     const { status } = await Camera.requestCameraPermissionsAsync();
-    console.log({ status });
     setHasCameraPermission(status === PermissionStatus.GRANTED);
   }
 
